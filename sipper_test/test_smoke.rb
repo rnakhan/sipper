@@ -1,8 +1,8 @@
 require 'driven_sip_test_case'
 
-#
+# ---
 # A very simple inlined smoke test.
-#
+# ---
 
 require 'transport/base_transport'
 
