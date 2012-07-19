@@ -1,4 +1,4 @@
-README
+README file
 
 Please read the docs/manual.txt and the write ups on the wiki 
 https://svn.freepository.com/39e65pBOqvcQA-web/wiki to get started. 
