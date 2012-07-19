@@ -1,0 +1,74 @@
+<log4r_config>
+  <pre_config>
+    <global level="DEBUG"/>
+  </pre_config>
+
+  <!-- Outputters -->
+
+  <outputter name="sipout" type="FileOutputter" level="ERROR">
+    <filename>#{logpath}/#{pid}_sipper.log</filename>
+    <formatter name="aformat" type="PatternFormatter" pattern="[%l]:[%d]:[%h]:%C :: %m">
+      <date_method>to_f</date_method>
+    </formatter>
+  </outputter>
+  
+  <outputter name="sipmsgtrace" type="FileOutputter" level="DEBUG">
+    <filename>#{logpath}/#{pid}#{udfname}_sipmsgtrace.log</filename>
+    <formatter name="aformat" type="PatternFormatter" pattern="[%d]:[%h]:: %m">
+      <date_method>to_f</date_method>
+    </formatter>
+  </outputter>
+  
+  
+  <!-- Spit any ERRORs to the console. They merit special attention -->
+  <outputter name="console" type="StderrOutputter" level="FATAL"/>
+  
+  
+
+  <!-- Loggers -->
+
+  <logger name="siplog" level="DEBUG" additive="false" trace="true">
+    <outputters>sipout, console</outputters>
+  </logger>
+
+  <logger name="siplog::transport_udptransport" level="ERROR" additive="true" trace="true"/>
+  <logger name="siplog::transport_tcptransport" level="ERROR" additive="true" trace="true"/>
+  <logger name="siplog::request" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::message" level="ERROR" additive="true" trace="true"/>
+  <logger name="siplog::response" level="ERROR" additive="true" trace="true"/>
+  <logger name="siplog::session" level="ERROR" additive="true" trace="true"/>
+  <logger name="siplog::messagefill" level="ERROR" additive="true" trace="true"/>
+  <logger name="siplog::sipmessagerouter" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::sessionmanager" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::sip_sipper" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::udpsession" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::tcpsession" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::detachedsession" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::udpsessionwrapper" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::sip_basecontroller" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::sip_controllerselector" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::sessionrecorder" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::sipperconfigurator" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::sip_controllerclassloader" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::sip_testcompletionsignalinghelper" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::sip_timermanager" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::sip_transaction_inviteclienttransaction" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::sip_transaction_inviteservertransaction" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::sip_transaction_noninviteservertransaction" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::sip_transaction_noninviteclienttransaction" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::sipperutil_expectationelement" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::sipperutil_commandelement" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::sipheaders_header" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::media_sippermediaproxy" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::media_sippermediamanager" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::media_sippermediaclient" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::media_sipperofferanswer" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::media_sipperdummymediaclient" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::sipperhttprequestdispatcher" level="ERROR" additive="true" trace="false"/>
+  <logger name="siplog::sipperhttp_sipperhttpservlet" level="ERROR" additive="true" trace="false"/>
+  
+  <logger name="sipmsgtracelog" level="DEBUG" additive="false" trace="true">
+    <outputters>sipmsgtrace</outputters>
+  </logger>
+ 
+</log4r_config>

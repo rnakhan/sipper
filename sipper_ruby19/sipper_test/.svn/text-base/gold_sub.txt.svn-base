@@ -1,0 +1,9 @@
+UPDATE sip:nasir@agnity.com SIP/2.0
+Contact: <sip:127.0.0.1:5060;transport=UDP>
+Via: SIP/2.0/UDP 127.0.0.1:5060;branch=z9hG4bK-2-0-2
+Call-ID: 1-_PID_@127.0.0.1
+From: Sipper <sip:sipper@127.0.0.1:5060>;tag=2
+Max-Forwards: 70
+To: Sipper <sip:sipper@127.0.0.1:5060>;tag=2
+Cseq: 2 UPDATE
+Content-Length: 0

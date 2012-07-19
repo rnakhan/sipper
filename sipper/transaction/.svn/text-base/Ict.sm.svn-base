@@ -1,0 +1,59 @@
+// Invite Client Transaction. Section 17.1.1
+
+%class Ict
+
+%start IctMap::Initial
+
+%map IctMap
+
+%%
+
+Initial
+{
+  invite            Calling    { __send_invite(); __start_A(); __start_B(); }
+  transport_err     Terminated { __transport_err(); }  // even though not mentioned in RFC
+}
+
+
+Calling
+Exit   { __cancel_A(); __cancel_B(); }
+{
+  timer_A(t: ltime)  nil        { __send_invite(); __reset_A(t); }
+  provisional        Proceeding { __consume_msg(true); }
+  non_success_final  Completed  { __create_ack(); __send_ack(); __cancel_Y(); __consume_msg(true); } 
+  success_final      Terminated { __cancel_Y(); __consume_msg(true); }  
+  timer_B            Terminated { __timeout(); }  
+  transport_err      Terminated { __transport_err(); }
+  cancel_sent        nil        { __start_Y(); }
+  timer_Y            Terminated { __timeout(); }
+}
+
+
+Proceeding
+Exit  { __cancel_Y(); }
+{
+  provisional        nil        { __consume_msg(true); }
+  non_success_final  Completed  { __create_ack(); __send_ack(); __consume_msg(true); } 
+  success_final      Terminated { __consume_msg(true); } 
+  transport_err      Terminated { __transport_err(); }  // even though not mentioned in RFC
+  cancel_sent        nil        { __start_Y(); }
+  timer_Y            Terminated { __timeout(); }
+}
+
+Completed 
+Entry { __start_D();  }
+{
+  non_success_final  nil        { __send_ack(); __consume_msg(false); }
+  timer_D            Terminated { }
+  transport_err      Terminated { __transport_err(); }
+  cancel_sent        nil        { }  // no effect
+}
+
+
+Terminated
+Entry { __cleanup(); }
+{
+  cancel_sent        nil        { }  // no effect
+}
+
+%%

@@ -1,0 +1,86 @@
+
+require 'rake/clean'
+require 'rake/testtask'
+require 'yaml'
+require 'rubygems'
+
+# Required purely for backwards compatibility
+def set_sipper_home
+  ENV['SIPPER_HOME'] = 'backward_compat' unless ENV['SIPPER_HOME']
+end
+
+# The SIPPER_HOME is only required for Dev setups where gem is not 
+# installed and Sipper is run from source. 
+
+def add_sipper_path_if_gem(t=nil)
+  s = Gem.source_index.find_name("Sipper")
+  if s.length == 1
+    u = s[0].full_gem_path
+    q = File.join(u, "sipper_test")
+  else
+    q = File.join(ENV['SIPPER_HOME'], "sipper_test")
+  end
+  t.libs << q  if t
+  return q
+end
+
+
+CLEAN.include("logs/*.log")
+CLEAN.include("logs/*._in")
+CLEAN.include("logs/*._out")
+CLEAN.include("logs/precall*")
+CLEAN.include("logs/.Test*")
+
+task :default => [:my_test]
+
+desc "Run all unit tests"
+Rake::TestTask.new(:test) do |t|
+  set_sipper_home()
+  add_sipper_path_if_gem(t)
+  
+  t.libs << "tests"
+  
+  t.test_files= 
+   Dir.glob("tests/*.rb")
+  t.verbose = true
+end
+
+# order_tests.yaml file should be present
+# in the tests directory for this ordering
+# of tests to work. If not found then we
+# default to built in test run task
+desc "Run all unit tests in order"
+task :my_test do
+  require 'test/unit/ui/console/testrunner'
+  require 'test/unit'
+  set_sipper_home()
+  q = add_sipper_path_if_gem()
+  $:.unshift q  if q
+  Test::Unit.run = true
+  path = File.join("tests", "order_tests.yaml") 
+  if File.exists?(path)
+    a = File.open(path) {|yf| YAML::load(yf)}
+  else
+    begin
+      Rake::Task["test"].execute
+      exit
+    rescue ArgumentError
+      Rake::Task["test"].execute nil
+      exit
+    end
+  end 
+  c = Dir.glob("tests/*.rb")
+  b = c.map {|f| f[6..-1]} # remove "tests/"
+  path = File.join("tests", "order_tests.yaml") 
+  if File.exists?(path)
+    a = File.open(path) {|yf| YAML::load(yf)}
+  else
+    a = []
+  end 
+  test_files = a + (b - a)
+  test_files.each do |tf|   
+    load "tests/"+tf
+    Test::Unit::UI::Console::TestRunner.run(::Kernel.const_get(tf[0..-4].split("_").map! {|x| x.capitalize}.join))
+  end
+end
+

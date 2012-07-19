@@ -1,0 +1,88 @@
+#!/usr/bin/env ruby
+$:.unshift File.join(File.dirname(__FILE__),"..", "sipper")
+
+require 'sipper_configurator'
+require 'bin/common'
+dir = SipperUtil::Common.set_environment()
+
+require "generators/gen_controller"
+require "generators/gen_test"
+
+Signal.trap("INT") { puts; exit }
+
+
+require File.dirname(__FILE__) + '/../sipper/version'
+
+
+def __print_usage
+  puts "Options:   --version | -v  => print version information"
+  puts "           --help | -h  => print this message"
+  puts "           -c|-t [-r] <class_name> <flow_str>"
+  puts "         => -c for controller and -t for test generation"
+  puts "         => -r to optionally generate the reverse or opposite"
+  puts "            flow from flow_str."
+  puts "            i.e if flow indicates UAS then generate a UAC etc."
+  puts "         => <class_name> is the name of class to be generated, "
+  puts "            controller or test."
+  puts "         => <flow_str> is the actual call flow." 
+  puts "            e.g. '< INVITE, > 100, > 200 {2,7}, < ACK'" 
+  puts "         => -p <Test name> <Pcap file> <IP>"
+  puts "            -p to generate test from pcap file"
+  exit(0)
+end
+
+if %w(--version -v).include? ARGV.first
+  puts "generate #{SIP::VERSION::STRING}"
+  exit(0)
+end
+
+if ((ARGV.length < 3) || %w(--help -h).include?(ARGV.first) || !(%w(-t -c -p).include?(ARGV.first)))
+  __print_usage
+end
+
+if %w(-p).include? ARGV.first
+  raise "\nThis is a base SIPr installation and pcap test generator is not supported here. Upgrade to SIPr Professional for pcap test generation support" unless SipperConfigurator[:GobletRelease]
+  
+  if ARGV.length < 4 
+    __print_usage
+  end
+end  
+    
+
+
+type = ARGV.shift
+reverse = false
+if ARGV.first == "-r"
+  reverse = true
+  ARGV.shift  
+end
+
+gcls = ARGV.shift # class name
+if type == "-p"
+  pcap_file = ARGV.shift
+  filter = ARGV.shift
+else  
+flow = ARGV.shift.dup
+unless gcls && flow 
+  __print_usage
+end
+end
+
+
+if reverse
+  flow.gsub!("<", "~").gsub!(">", "<").gsub!("~", ">")
+end
+
+if type == "-c"
+  g = SIP::Generators::GenController.new(gcls, flow)
+  g.generate_controller(true, dir.nil? ? nil : File.join(dir, "controllers") )
+elsif type == "-t"
+  g = SIP::Generators::GenTest.new(gcls, flow)
+  g.generate_test(true, dir.nil? ? nil : File.join(dir, "tests"))
+elsif type == "-p"
+  require 'goblet/sipper_ext/gen_pcap_test'
+  g = SIP::Generators::GenPcapTest.new(gcls,pcap_file, filter)
+  g.generate_pcap_test(true, dir.nil? ? nil : File.join(dir, "tests") )
+else
+  __print_usage
+end

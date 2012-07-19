@@ -1,0 +1,36 @@
+Following are the steps to build the windows installer. 
+
+Prerequisite
+------------
+1. Install the "Inno Setup Compiler", version 5 or later from http://www.jrsoftware.org/isinfo.php 
+
+
+
+Steps 
+-----
+
+1. Build the Sipper gem. To do that modify the version.rb file under root for proper version
+   numbers. Execute "gem build sipper.gemspec". This will create
+   Sipper-xxx.gem, where xxx is the right version number. Change version at places in sipper.iss - 
+   AppVerName, While copying the gem and in c.cmd while running the gem. 
+    
+   
+1.1 Create all the exes and place them in sipper/bin directory. For each platform. 
+   
+2. Then change directory to installer/windows installer directory and execute "make_installer.cmd". This 
+   will create a directory called c:\sipper_installer.
+2.1 For linux and solaris run make_installer.sh
+   
+3. Then change directory to c:\sipper_installer and start "Inno Setup Compiler 5". Load the file
+   sipper.iss in the editor, change the version number as required and select "build -> compile" 
+   option from the menu. This will create setup.exe which is the windows installer.
+   
+3.1 For linux and solaris change dir to /tmp/sipper_installer (tar and zip this dir)
+   
+4 The only pre-requisite before installing on windows (XP, 2000, or Vista) machine is Ruby 1.8.6 
+and Rubygems. 
+
+4.1 Prereqs for Linux and Solaris
+    a. Ruby 1.8.6 compiled for Linux
+    b. Rubygems installed for Linux
+    c. yum install libpcap-devel

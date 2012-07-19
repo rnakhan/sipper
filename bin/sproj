@@ -1,0 +1,44 @@
+#!/usr/bin/env ruby
+require File.join(File.dirname(__FILE__), "..", "sipper", "generators", "gen_project")
+
+Signal.trap("INT") { puts; exit }
+
+require File.dirname(__FILE__) + '/../sipper/version'
+
+
+def __print_usage
+  usage = <<-EOF
+  Usage : sproj [-f] <name_of_project> 
+    This command creates a new directory by the name 'name_of_project'
+    and creates a directory structure under it for the project. 
+    The only optional argument is -f to force create the project directory.  
+    Please see user manual for details of the directory structure. 
+  EOF
+  puts usage
+  exit(0)
+end
+
+if %w(--version -v).include? ARGV.first
+  puts "generate #{SIP::VERSION::STRING}"
+  exit(0)
+end
+
+if ((ARGV.length > 2) || (ARGV.length == 0) || %w(--help -h).include?(ARGV.first) )
+  __print_usage
+end
+
+if "-f".include?(ARGV.first)
+  ARGV.shift
+  flag = true
+else
+  flag = false
+end
+
+name = ARGV.shift
+
+begin
+  SIP::Generators::GenProject.new(name, flag)
+#rescue
+#  __print_usage
+#  raise
+end

@@ -1,0 +1,51 @@
+// Non Invite Client Transaction. Section 17.1.2 and RFC 4320
+
+%class Nict
+
+%start NictMap::Initial
+
+%map NictMap
+
+%%
+
+Initial
+{
+  request           Trying    { __send_request(); __start_E(); __start_F(); }
+  transport_err     Terminated { __transport_err(); }  
+}
+
+
+Trying
+{
+  timer_E(t: ltime)  nil        { __send_request(); __reset_E(t); }
+  final              Completed  { __consume_msg(true); } // 200-699
+  provisional        Proceeding { __consume_msg(true); } // 100-199
+  timer_F            Terminated { __timeout(); }    
+  transport_err      Terminated { __transport_err(); }
+}
+
+
+Proceeding
+Exit   { __cancel_E(); __cancel_F(); }
+{
+  timer_E(t: ltime)  nil        { __send_request(); __reset_E(); } // default resets to T2
+  final              Completed  { __consume_msg(true); } // 200-699
+  provisional        nil        { __consume_msg(true); }
+  timer_F            Terminated { __timeout(); }
+  transport_err      Terminated { __transport_err(); }  
+}
+
+Completed 
+Entry { __start_K();  }
+{
+  final              nil        { __consume_msg(false); } // 200-699 retrans
+  timer_K            Terminated { }
+}
+
+
+Terminated
+Entry { __cleanup(); }
+{
+}
+
+%%

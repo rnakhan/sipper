@@ -1,0 +1,43 @@
+%class SipCreditControl
+
+%start MessageMap::Initial
+
+%map MessageMap
+
+%%
+
+Initial
+{
+  invite      Connecting {}
+}
+
+
+Connecting
+{
+
+  provisional nil        {}
+
+  error(s: Session)  Terminated { cleanup(s); }
+
+  success     Connected  {}
+
+}
+
+
+Connected
+{
+  message(s: Session)  
+  [ctxt.check_credit(s)] 
+    nil   { send_success(s); } 
+
+  message(s: Session)   Terminated  { send_bye(s); cleanup(s); }
+
+  bye(s: Session)       Terminated { send_bye(s); cleanup(s); }
+}
+
+
+Terminated
+{
+}
+
+%%

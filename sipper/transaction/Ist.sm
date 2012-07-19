@@ -1,0 +1,74 @@
+// Invite Server Transaction. Section 17.2.1
+
+%class Ist
+
+%start IstMap::Initial
+
+%map IstMap
+
+%%
+
+Initial
+{
+  invite            Proceeding { __send_trying();  __consume_msg(true); }       //i
+  transport_err     Terminated { __transport_err(); }  // even though not mentioned in RFC
+}
+
+
+
+Proceeding
+{
+  provisional(r: resp)       nil        { __send_provisional_response(r); }            //o
+  invite                     nil        { __send_last_response(); __consume_msg(false); }  //i 
+  success_final(r: resp)     Finished   { __send_success_response(r); }                //o
+  non_success_final(r: resp) Completed  { __send_non_success_final_response(r); }      //o
+  cancel                     Completed  { __create_and_send_487(); __consume_msg(true); }  //i
+  transport_err              Terminated { __transport_err(); }
+}
+
+
+Completed 
+Entry { __start_H();  __start_G();  }
+Exit  { __cancel_H(); __cancel_G(); }
+{
+  timer_G(t: ltime)  nil        { __send_last_response(); __reset_G(t); }
+  timer_H            Terminated { __timeout(); }
+  transport_err      Terminated { __transport_err(); }  
+  ack                Confirmed  { __consume_msg(true); }                          //i
+  invite             nil        { __send_last_response(); __consume_msg(false); }  //i
+  cancel             nil        { __consume_msg(true); }                           //i
+}
+
+
+
+Confirmed
+Entry { __start_I(); }
+{
+  timer_I            Terminated { __timeout(); }
+  cancel             nil        { __consume_msg(true); }                          //i consume to send 200
+  ack                        nil    { __consume_msg(true); }                     //i
+  invite                     nil    { __send_last_response(); __consume_msg(false); }  //i
+}
+
+
+
+// sipit bug http://bugs.sipit.net/show_bug.cgi?id=769
+// on the same lines as Timer I
+// this state is practically invisible
+
+Finished
+Entry { __start_Z(); }
+Exit  { }
+{
+  invite             nil        { __consume_msg(false); }    //i txn is tu agnostic
+  timer_Z            Terminated { }
+  cancel             nil        { __consume_msg(true); }   //i
+}
+
+
+Terminated
+Entry { __cleanup(); }
+{
+}
+
+%%

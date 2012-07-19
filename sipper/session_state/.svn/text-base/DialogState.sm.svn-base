@@ -1,0 +1,54 @@
+// Dialog state machine, refer to RFC 4235
+// This is not being used currently, put here for future 
+
+%class Dsm
+
+%start DsmMap::Trying
+
+%map DsmMap
+
+%%
+
+Trying
+{
+  one_xx_no_tag       Proceeding {}
+  one_xx_tag          Early {}
+  two_xx	          Confirmed {}
+  cancelled_rejected  Terminated {}
+  three_xx			  Terminated {}
+}
+
+
+Proceeding
+{
+  one_xx_tag          Early {}
+  two_xx	          Confirmed {}
+  cancelled_rejected  Terminated {}
+  three_xx			  Terminated {}
+}
+
+Early
+{
+  replaced			  Terminated {}
+  two_xx			  Confirmed {}
+  one_xx_tag          nil {}
+  three_xx			  Terminated {}
+}
+
+Confirmed
+{
+  error		          Terminated {}
+  timeout			  Terminated {}
+  replaced			  Terminated {}
+  bye				  Terminated {}
+  two_xx              nil {}
+}
+
+Terminated
+{
+  timeout			  nil {}
+  bye 		        nil {}
+}
+
+
+%%

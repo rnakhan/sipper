@@ -1,0 +1,12 @@
+Usage for gen_controller is - 
+gen_controller.rb <name_of_controller_class> "String of call flow" 
+e.g gen_controller.rb MyController "> INVITE, < 200, > ACK"
+The generated controller can be run using the run/run_sipper1 script passing it this 
+generated controller as in run_sipper1.rb -c <proper_path_to my_controller.rb>
+
+Usage for gen_test is - 
+gen_test.rb <name_of_test_class> "String of call flow" 
+e.g gen_test.rb MyTest "> INVITE, < 200, > ACK"
+The generated test class can be run standalone as ruby -I <path to sipper_test> my_test.rb
+If it is a UAS then it will wait for 180 seconds for getting a request before failing the test. 
+This is part of generated code, which can be modified.  

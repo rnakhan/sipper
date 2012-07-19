@@ -1,0 +1,8 @@
+SIP/2.0 200 OK
+Contact: <sip:127.0.0.1:5060;transport=UDP>
+Via: SIP/2.0/UDP 127.0.0.1:5061;branch=z9hG4bK-1-0-1
+Call-ID: 1-_PID_@127.0.0.1
+From: Sipper <sip:sipper@127.0.0.1:5060>;tag=2
+To: Sipper <sip:sipper@127.0.0.1:5060>;tag=2
+Content-Length: 0
+Cseq: 1 INVITE
