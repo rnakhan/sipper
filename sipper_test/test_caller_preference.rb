@@ -129,7 +129,7 @@ class TestCallerPreference < DrivenSipTestCase
     end
     self.expected_flow = ["> REGISTER", "< 200"]
     start_named_controller_non_blocking("TestCallerPreference_SipInline::UacCallerPreferenceController")
-    sleep 1
+    sleep 3
     verify_call_flow(:out,0)
 
     self.expected_flow = ["< REGISTER","> 200"]

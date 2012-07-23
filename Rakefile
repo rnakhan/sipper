@@ -18,7 +18,7 @@ Rake::TestTask.new(:test) do |t|
   t.test_files= 
    (Dir.glob("sipper_test/test*.rb")-["sipper_test/test_remote_controller.rb", 
      "sipper_test/test_generated.rb", "sipper_test/test_media.rb", 
-     "sipper_test/testmediacontroller.rb"])
+     "sipper_test/testmediacontroller.rb"] - Dir.glob("sipper_test/*media*.rb"))
   t.verbose = true
 end
 

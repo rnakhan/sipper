@@ -46,7 +46,7 @@ a=rtpmap:0 PCMU/8000
     msg = [str, ["AF_INET", 33302, "localhost.localdomain", "127.0.0.1"]]
     r = Message.parse msg
     assert_instance_of(Request, r)
-    assert_equal("SIP/2.0/UDP 127.0.0.1:6061;branch=z9hG4bK-2352-1-0;received=127.0.0.2", r.via.to_s)
+    assert_equal("SIP/2.0/UDP 127.0.0.1:6061;branch=z9hG4bK-2352-1-0;received=127.0.0.1", r.via.to_s)
     assert_equal(129, r.content_len)  # no \r in text
     assert_equal(["AF_INET", 33302, "localhost.localdomain", "127.0.0.1"], r.rcvd_from_info )
     assert_equal("v=0", r.contents[0])
@@ -89,7 +89,7 @@ a=rtpmap:0 PCMU/8000
     msg = [str, ["AF_INET", 33302, "localhost.localdomain", "127.0.0.1"]]
     r = Message.parse msg
     assert_instance_of(Request, r)
-    assert_equal("SIP/2.0/UDP 127.0.0.1:6061;rport=33302;branch=z9hG4bK-2352-1-0;received=127.0.0.2", r.via.to_s)
+    assert_equal("SIP/2.0/UDP 127.0.0.1:6061;rport=33302;branch=z9hG4bK-2352-1-0;received=127.0.0.1", r.via.to_s)
     assert_equal(["AF_INET", 33302, "localhost.localdomain", "127.0.0.1"], r.rcvd_from_info )
   end
   
@@ -117,7 +117,7 @@ a=rtpmap:0 PCMU/8000}
     msg = [str, ["AF_INET", 33302, "localhost.localdomain", "127.0.0.1"]]
     r = Message.parse msg
     assert_instance_of(Request, r)
-    assert_equal("SIP/2.0/UDP 127.0.0.1:6061;branch=z9hG4bK-2352-1-0;received=127.0.0.2", r.via.to_s)
+    assert_equal("SIP/2.0/UDP 127.0.0.1:6061;branch=z9hG4bK-2352-1-0;received=127.0.0.1", r.via.to_s)
     assert_equal("sipp <sip:sipp@127.0.0.1:6061>;tag=1", r.from.to_s)
     assert_equal("sut <sip:service@127.0.0.1:5060>", r.to.to_s)
     assert_equal("1-2352@127.0.0.1", r.call_id.to_s)
@@ -211,7 +211,7 @@ m=audio 6000 RTP/AVP 0
 a=rtpmap:0 PCMU/8000} 
     msg = [str, ["AF_INET", 33302, "localhost.localdomain", "127.0.0.1"]]
     r = Message.parse msg
-    assert_equal("SIP/2.0/UDP ash@home.com;branch=z9hG4bK-2352-1-0;received=127.0.0.2", r.via.to_s)
+    assert_equal("SIP/2.0/UDP ash@home.com;branch=z9hG4bK-2352-1-0;received=127.0.0.1", r.via.to_s)
   end
   
   def test_parse_response
@@ -241,7 +241,7 @@ Cseq: 1 INVITE}
     assert(@m.respond_to?(:each))
     n = 0
     @m.each {|k,v|  n+=1}
-    assert_equal(8, n) # 3 addnl system headers
+    assert_equal(9, n) # 3 addnl system headers
   end
   
   def test_copy_from
@@ -281,7 +281,7 @@ Cseq: 1 INVITE}
     assert_equal(str2, m.vias[1].to_s)
     m.via = str4 = "SIP/2.0/UDP pc55@biloxi.com;branch=z9hG4bK-2353-1-0"
     assert_equal(str4, m.via.to_s)
-    assert(1, m.vias.length)
+    assert_equal(1, m.vias.length)
     m.via = [str, str2]
     assert_equal(str, m.via.to_s)
     assert_equal(str, m.vias[0].to_s)
