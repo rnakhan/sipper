@@ -132,7 +132,7 @@ module SIP
             define_method((SIP::ControllerSelector.pop).to_sym) do |session|
               result, old =  session.authenticate_request
               if result
-                super
+                super(session)
               else
                 if old
                   session.respond_with(403)  

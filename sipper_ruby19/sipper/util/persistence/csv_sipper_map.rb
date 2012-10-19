@@ -14,16 +14,18 @@ module SipperUtil
         path = SipperConfigurator[:PStorePath]||SipperConfigurator[:LogPath]
         @file = File.join(path, name)
         unless File.exists? @file
-          outfile = File.open(@file, 'wb')
-          CSV::Writer.generate(outfile) do |csv|
-            csv << ['sipper_user', 'sipper_passwd']
-          end
-          outfile.close     
+	        outfile = File.open(@file, 'wb')
+		CSV.open(outfile, "wb") do |csv|
+		     csv << ["sipper_user", "sipper_passwd"]
+		end
+	  
+        	outfile.close     
         end
         @csv_map = {}
-        #CSV::Reader.parse(File.open(@file, 'rb')) do |row|
-         # @csv_map[row[0]] = row[1] 
-        end
+        CSV.parse(File.open(@file, 'rb')) do |row|
+        @csv_map[row[0]] = row[1]
+	end	
+
       end
       
       def put(k,v)
@@ -60,4 +62,4 @@ module SipperUtil
       
     end
   end
-$end  
+end  
