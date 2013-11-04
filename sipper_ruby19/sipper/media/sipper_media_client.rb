@@ -117,13 +117,14 @@ module Media
     def add_codecs(c, s, r)
       cmd = "COMMAND=ADD CODECS;MEDIAID=#{@media_id};RECVPAYLOADNUM=#{r};SENDPAYLOADNUM=#{s};CODEC=#{c}"
       cmd << ";SENDFILE=#{@play_spec}" if @play_spec && c != 'DTMF'
-      cmd << ";SENDFILE=#{@dtmf_play_spec}" if @dtmf_play_spec && c == 'DTMF'
+      #cmd << ";SENDFILE=#{@dtmf_play_spec}" if @dtmf_play_spec && c == 'DTMF'
       cmd << ";RECVFILE=#{@record_file}" if @record_file && c != 'DTMF'
       res = _send_command(cmd)
 
       if res.result == "Success"
          @codec << r
       end
+	  set_dtmf_command(@dtmf_play_spec) if @dtmf_play_spec && c == 'DTMF'
     end
 
     def set_dtmf_command(cmd)
