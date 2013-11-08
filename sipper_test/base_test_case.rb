@@ -21,6 +21,7 @@ class BaseTestCase < Test::Unit::TestCase
   end
   
   def teardown
+    SIP::Locator[:Smd].shutdown if SIP::Locator[:Smd] and !SipperConfigurator[:SipperMediaProcessReuse]
     FileUtils.rm_r SipperConfigurator[:SessionRecordPath]  unless (Dir.glob(File.join(SipperConfigurator[:SessionRecordPath], "*"))).length>0 if File.exist?(SipperConfigurator[:SessionRecordPath]) if SipperConfigurator[:SessionRecordPath]
   end
   

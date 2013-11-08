@@ -1725,7 +1725,7 @@ class Session
     end
     @ilog.debug("In flow_completed_for() now signaling the waiting test") if @ilog.debug?
     SIP::TestCompletionSignalingHelper.signal_waiting_test(test_name.to_s)
-	SIP::Locator[:Smd].shutdown if SIP::Locator[:Smd] and !SipperConfigurator[:SipperMediaProcessReuse]
+	#SIP::Locator[:Smd].shutdown if SIP::Locator[:Smd] and !SipperConfigurator[:SipperMediaProcessReuse]
   end
   
   # The first recording will create the recording file name using in or out
