@@ -11,10 +11,7 @@ SPEC = Gem::Specification.new do |s|
    s.homepage      = "http://sipper.agnity.com"
    s.rubyforge_project = "sipper" 
    s.summary       = "Sipper - World's most productive SIP platform" 
-   candidates      = Dir.glob("{sipper,sipper_test,Rakefile,bin}/**/*") 
-   s.files         = candidates.delete_if do |item| 
-                       item.include?(".svn") 
-                     end 
+   s.files         = Dir.glob("{sipper,sipper_test,Rakefile,bin}/**/*") 
    s.require_path  = "." 
    s.has_rdoc       = false 
    s.bindir = "bin"

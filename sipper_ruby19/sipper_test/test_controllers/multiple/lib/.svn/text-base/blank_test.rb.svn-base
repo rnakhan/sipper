@@ -1,2 +1,0 @@
-class BlankTest  
-end

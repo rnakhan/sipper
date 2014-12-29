@@ -1,2 +1,0 @@
-README
-Contains the controllers. 
